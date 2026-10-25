@@ -1,0 +1,6 @@
+{
+  "name": "HCM Lite - AI-Assisted HR System",
+  "description": "Full-stack enterprise Human Capital Management system with role-based access for Admin, HR, and Employees, attendance rules, automated payroll calculations, and Gemini AI assistant.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

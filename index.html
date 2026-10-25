@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Fix for Chrome extensions attempting to patch window.fetch when it has only a getter
+      (function() {
+        try {
+          var _origFetch = window.fetch;
+          // 1. Define writable own property on window so assignments `window.fetch = ...` succeed
+          Object.defineProperty(window, 'fetch', {
+            value: _origFetch,
+            writable: true,
+            configurable: true,
+            enumerable: true,
+          });
+        } catch (e1) {
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: function() { return _origFetch; },
+              set: function(fn) { _origFetch = fn; },
+              configurable: true,
+              enumerable: true,
+            });
+          } catch (e2) {}
+        }
+
+        try {
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            var protoDesc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
+            if (protoDesc && !protoDesc.set) {
+              Object.defineProperty(Window.prototype, 'fetch', {
+                get: protoDesc.get || function() { return _origFetch; },
+                set: function(fn) { _origFetch = fn; },
+                configurable: true,
+                enumerable: true,
+              });
+            }
+          }
+        } catch (e3) {}
+
+        // Prevent external extension errors from breaking application execution
+        window.addEventListener('error', function(event) {
+          if (
+            (event.filename && (event.filename.indexOf('chrome-extension://') !== -1 || event.filename.indexOf('moz-extension://') !== -1)) ||
+            (event.message && event.message.indexOf('Cannot set property fetch of #<Window>') !== -1)
+          ) {
+            if (event.preventDefault) event.preventDefault();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HCM Lite - AI-Assisted HR System</title>
+    <meta name="description" content="Full-stack enterprise Human Capital Management system with role-based access for Admin, HR, and Employees, attendance rules, automated payroll calculations, and Gemini AI assistant." />
+    <meta property="og:title" content="HCM Lite - AI-Assisted HR System" />
+    <meta property="og:description" content="Full-stack enterprise Human Capital Management system with role-based access for Admin, HR, and Employees, attendance rules, automated payroll calculations, and Gemini AI assistant." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#FBFBFA] text-[#18181B] antialiased min-h-screen selection:bg-emerald-100 selection:text-emerald-900 font-['Plus_Jakarta_Sans',sans-serif]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

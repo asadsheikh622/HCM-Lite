@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use('/api/v1', apiRouter);
+app.use('/api', apiRouter);
 
 let dbReady: Promise<void> | null = null;
 

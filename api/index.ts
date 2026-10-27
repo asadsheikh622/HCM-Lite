@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { apiRouter } from '../server/src/routes/api.routes';
+// import { apiRouter } from '../server/src/routes/api.routes';
+import { apiRouter } from '../server/src/routes/api.routes.ts';
 import { connectDB, dbStatus } from '../server/src/config/database';
 import { ENV } from '../server/src/config/env';
 

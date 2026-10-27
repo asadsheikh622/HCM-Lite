@@ -65,7 +65,15 @@ function generateId(): string {
 
 export class DBService {
   private static isAtlas(): boolean {
-    return dbStatus.mode === 'atlas' && mongoose.connection.readyState === 1;
+    if (dbStatus.mode === 'atlas') {
+      if (mongoose.connection.readyState !== 1) {
+        throw new Error(
+          `Database Operation Failed: MongoDB Atlas connection is not active (readyState: ${mongoose.connection.readyState}). Status: ${dbStatus.statusText}. Please verify MONGODB_URI and ensure Network Access in MongoDB Atlas allows 0.0.0.0/0.`
+        );
+      }
+      return true;
+    }
+    return false;
   }
 
   // --- Company ---

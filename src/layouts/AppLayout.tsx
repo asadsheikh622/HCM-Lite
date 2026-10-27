@@ -130,13 +130,35 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </button>
           )}
 
-          {/* AI Assistant Quick Trigger */}
+          {/* Futuristic Glowing AI Orb Trigger */}
           <button
             onClick={onOpenAI}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/60 rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
+            title="Open AI Assistant"
+            aria-label="Open AI Assistant"
+            className="group relative flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 hover:border-emerald-500/40 shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300 cursor-pointer shrink-0"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span>AI Assistant</span>
+            {/* Animated Floating Container */}
+            <div className="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 animate-orb-float">
+              {/* Subtle Glowing Green Aura */}
+              <div className="absolute -inset-1 rounded-full bg-emerald-400/35 blur-sm animate-orb-pulse pointer-events-none group-hover:bg-emerald-400/60" />
+
+              {/* Rotating Orbital Dashed Ring */}
+              <div className="absolute -inset-0.5 rounded-full border border-emerald-400/40 border-dashed animate-orb-spin pointer-events-none" />
+
+              {/* Futuristic Spherical 3D Orb Core */}
+              <div className="ai-orb-core relative w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                {/* Specular Highlight Glare */}
+                <div className="absolute top-0.5 left-1 w-1.5 h-1 bg-white/75 rounded-full blur-[0.3px] -rotate-45 pointer-events-none" />
+                
+                {/* Internal Pulsing Spark Icon */}
+                <Sparkles className="w-3 h-3 text-white drop-shadow-[0_0_3px_rgba(255,255,255,0.9)] animate-pulse" />
+              </div>
+            </div>
+
+            {/* Responsive AI Text Label */}
+            <span className="hidden sm:inline-block text-xs font-semibold text-emerald-900 group-hover:text-emerald-950 transition-colors pr-0.5">
+              AI Assistant
+            </span>
           </button>
 
           {/* Database Health Trigger */}
@@ -192,6 +214,26 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </button>
             );
           })}
+          
+          {/* Mobile Drawer AI Assistant Item */}
+          <button
+            onClick={() => {
+              onOpenAI();
+              setMobileMenuOpen(false);
+            }}
+            className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl text-emerald-900 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/50 transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="relative flex items-center justify-center w-5 h-5">
+                <div className="ai-orb-core w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                  <Sparkles className="w-2.5 h-2.5 text-white" />
+                </div>
+              </div>
+              <span className="font-bold">AI Assistant</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+          </button>
+
           <div className="pt-2 border-t border-zinc-100 flex items-center justify-between px-3">
             <span className="text-xs text-zinc-500">{currentUser.name} ({currentUser.role})</span>
             <button onClick={onLogout} className="text-xs text-rose-600 font-semibold">Sign Out</button>

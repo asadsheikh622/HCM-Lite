@@ -21,8 +21,14 @@ export const apiRouter = Router();
 // 1. HEALTH & SYSTEM STATUS
 // ==========================================
 apiRouter.get('/health', async (_req, res) => {
-  const company = await DBService.getCompany();
-  const superAdminCount = await DBService.countUsersByRole('admin');
+  let company = null;
+  let superAdminCount = 0;
+  try {
+    company = await DBService.getCompany();
+    superAdminCount = await DBService.countUsersByRole('admin');
+  } catch (err: any) {
+    console.warn('[Health Probe] Database query notice during health check:', err.message);
+  }
 
   res.json({
     status: 'ok',
@@ -50,14 +56,36 @@ apiRouter.get('/health', async (_req, res) => {
 // 2. FIRST-RUN SETUP & SECURE ADMIN BOOTSTRAP
 // ==========================================
 apiRouter.get('/setup/status', async (_req, res) => {
-  const company = await DBService.getCompany();
-  const superAdminCount = await DBService.countUsersByRole('admin');
+  try {
+    const company = await DBService.getCompany();
+    const superAdminCount = await DBService.countUsersByRole('admin');
 
-  res.json({
-    isInitialized: Boolean(company?.isInitialized),
-    superAdminExists: superAdminCount > 0,
-    authorizedBootstrapEmail: ENV.INITIAL_ADMIN_EMAIL,
-  });
+    res.json({
+      isInitialized: Boolean(company?.isInitialized),
+      superAdminExists: superAdminCount > 0,
+      authorizedBootstrapEmail: ENV.INITIAL_ADMIN_EMAIL,
+      database: {
+        isConnected: dbStatus.isConnected,
+        mode: dbStatus.mode,
+        isFallback: dbStatus.mode === 'memory',
+        error: dbStatus.error,
+      },
+    });
+  } catch (err: any) {
+    res.status(503).json({
+      error: 'Database connection failed',
+      details: err.message,
+      isInitialized: false,
+      superAdminExists: false,
+      authorizedBootstrapEmail: ENV.INITIAL_ADMIN_EMAIL,
+      database: {
+        isConnected: false,
+        mode: dbStatus.mode,
+        isFallback: false,
+        error: dbStatus.error || err.message,
+      },
+    });
+  }
 });
 
 apiRouter.post('/setup/bootstrap-admin', async (req, res) => {

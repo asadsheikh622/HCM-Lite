@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import mongoose from 'dotenv';
+import mongoose from 'mongoose';
 import { connectDB } from '../src/config/database';
 import {
   Company,

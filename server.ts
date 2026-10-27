@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+console.log('Mongo URI loaded:', Boolean(process.env.MONGODB_URI));
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -19,16 +22,31 @@ async function startServer() {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  app.use(cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
+  }));
+  app.options('*', cors());
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // REST API under /api/v1
+  // REST API mounts
   app.use('/api/v1', apiRouter);
+  app.use('/v1', apiRouter);
 
-  // Health probe root alias
+  // Health probe root aliases
   app.get('/api/health', (_req, res) => {
     res.redirect('/api/v1/health');
+  });
+  app.get('/health', (_req, res) => {
+    res.redirect('/api/v1/health');
+  });
+
+  // Guard against API 404s falling into frontend SPA handler
+  app.use('/api/*', (_req, res) => {
+    res.status(404).json({ error: 'API route not found' });
   });
 
   const isProduction = process.env.NODE_ENV === 'production';

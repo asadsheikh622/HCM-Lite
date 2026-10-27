@@ -28,6 +28,14 @@ export const dbStatus: IDBStatus = {
 let connectionPromise: Promise<void> | null = null;
 
 export async function connectDB(): Promise<void> {
+  // If already connected with active readyState, reuse existing connection pool
+  if (mongoose.connection.readyState === 1) {
+    dbStatus.isConnected = true;
+    dbStatus.mode = 'atlas';
+    dbStatus.isFallback = false;
+    return;
+  }
+
   // Prevent duplicate connection attempts across concurrent callers
   if (connectionPromise) {
     return connectionPromise;
@@ -100,13 +108,14 @@ export async function connectDB(): Promise<void> {
         dbStatus.error = undefined;
       });
     } catch (err: any) {
+      connectionPromise = null;
       if (isProd) {
         console.error(`[DB] Production MongoDB Atlas connection failed: ${err.message}`);
         dbStatus.isConnected = false;
         dbStatus.mode = 'atlas';
         dbStatus.isFallback = false;
         dbStatus.statusText = 'MongoDB Atlas Connection Failed (Production)';
-        dbStatus.error = `Could not connect to MongoDB Atlas: ${err.message}. Check network access and IP whitelist.`;
+        dbStatus.error = `Could not connect to MongoDB Atlas: ${err.message}. Check network access and IP whitelist (0.0.0.0/0).`;
       } else {
         console.warn(`[DB] Development Atlas connection failed (${err.message}). Activating development fallback mode.`);
         dbStatus.isConnected = true;

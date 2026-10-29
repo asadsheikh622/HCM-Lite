@@ -1,6 +1,6 @@
 import { IUser, ICompany, IDepartment, IDesignation, ILeaveType, IHoliday, IEmployee, IAttendance, IAttendanceCorrection, ILeaveRequest, IPayrollRun, IPayslip, IAnnouncement, INotification, IAuditLog } from '../types/client';
 
-const API_BASE = '/api/v1';
+const API_BASE = 'https://hcm-lite-backend-7rgi.onrender.com/api/v1';
 
 class ApiClient {
   private token: string | null = null;
